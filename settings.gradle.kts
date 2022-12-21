@@ -1,0 +1,1 @@
+rootProject.name = "com.progress.pitjack.ktor-progress-backend"
