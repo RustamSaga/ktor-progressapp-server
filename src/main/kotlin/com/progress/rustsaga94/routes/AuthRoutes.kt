@@ -23,11 +23,12 @@ fun Route.signUp(
     userDataSource: UserDataSource
 ) {
     post("signup") {
-        val request = kotlin.runCatching { call.receiveNullable<AuthRequest>() }.getOrNull() ?: kotlin.run {
+        val request = call.receiveOrNull<AuthRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
-        val areFieldsBlank = request.username.isBlank() || request.password.isBlank()
+        val isNameBlank = request.username.isBlank()
+        val isPasswordBlank = request.password.isBlank()
         val isPasswordShort = request.password.length < 8
 
         if (userDataSource.getUserByUsername(request.username) != null) {
@@ -35,9 +36,10 @@ fun Route.signUp(
             return@post
         }
 
-        if (areFieldsBlank || isPasswordShort) {
-            call.respond(HttpStatusCode.Conflict)
-            return@post
+        when {
+            isNameBlank -> { call.respond(HttpStatusCode.Conflict, "Field name is blank") }
+            isPasswordBlank -> { call.respond(HttpStatusCode.Conflict, "Field password is blank") }
+            isPasswordShort -> { call.respond(HttpStatusCode.Conflict, "Password size cannot be less than 8") }
         }
 
         val saltedHash = hashingService.generateSaltedHash(request.password)

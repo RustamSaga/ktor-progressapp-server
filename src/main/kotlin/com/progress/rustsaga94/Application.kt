@@ -16,9 +16,9 @@ fun main(args: Array<String>): Unit =
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
     val mongoPassword = System.getenv("MONGO_PASSWORD")
-    val dbName = "ktor-progress_app"
+    val dbName = "ktor-progress"
     val db = KMongo.createClient(
-        connectionString = "mongodb+srv://Rustam:$mongoPassword@cluster0.ellnejo.mongodb.net/$dbName?retryWrites=true&w=majority"
+        connectionString = "mongodb+srv://Rustam:$mongoPassword@cluster0.ellnejo.mongodb.net/?retryWrites=true&w=majority"
     )
         .coroutine
         .getDatabase(dbName)
@@ -37,5 +37,10 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureSecurity(tokenConfig)
-    configureRouting()
+    configureRouting(
+        userDataSource = userDataSource,
+        hashingService = hashingService,
+        tokenService = tokenService,
+        tokenConfig = tokenConfig
+    )
 }
