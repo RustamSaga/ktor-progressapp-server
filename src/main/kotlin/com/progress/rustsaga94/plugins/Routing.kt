@@ -1,6 +1,7 @@
 package com.progress.rustsaga94.plugins
 
 import com.progress.rustsaga94.data.UserDataSource
+import com.progress.rustsaga94.routes.getPerson
 import com.progress.rustsaga94.routes.getSecretInfo
 import com.progress.rustsaga94.routes.signIn
 import com.progress.rustsaga94.routes.signUp
@@ -22,5 +23,7 @@ fun Application.configureRouting(
         signUp(hashingService = hashingService, userDataSource = userDataSource)
         signIn(userDataSource, hashingService, tokenService, tokenConfig)
         getSecretInfo()
+
+        getPerson(hashingService, userDataSource)
     }
 }
